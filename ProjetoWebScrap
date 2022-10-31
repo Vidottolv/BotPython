@@ -1,0 +1,36 @@
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+import time
+import xlrd
+
+arq = open("resultado.txt", "w")
+Workbook = xlrd.open_workbook('C:/Users/Lucas/PYTHON/excel.xls')
+Sheet = Workbook.sheet_by_name('Planilha1')
+linha = Sheet.nrows
+coluna = Sheet.ncols
+
+options = webdriver.ChromeOptions()
+options.add_argument("--disable-logging")
+options.add_argument("--log-level=3")
+
+driver = webdriver.Chrome('C:/Users/Lucas/chromedriver.exe',options=options)
+driver.get("https://registro.br/")
+
+
+for curr_linha in range(0,linha):
+    x = Sheet.cell_value(curr_linha, 0)
+    pesquisa = driver.find_element_by_id("is-avail-field")
+    time.sleep(0.5)
+    pesquisa.clear()
+    time.sleep(0.5)
+    pesquisa.send_keys(x)
+    time.sleep(0.5)  
+    pesquisa.send_keys(Keys.RETURN)
+    time.sleep(0.5)
+    driver.find_element_by_xpath('//*[@id="app"]/main/section/div[2]/div/p/span/strong')
+    time.sleep(0.5)
+    texto = "Domínio %s %s\n" % (x , driver.find_element_by_xpath('//*[@id="app"]/main/section/div[2]/div/p/span/strong').text)
+    arq.write(texto)
+
+arq.close()
+driver.close()
