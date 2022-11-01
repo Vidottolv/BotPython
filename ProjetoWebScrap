@@ -3,34 +3,34 @@ from selenium.webdriver.common.keys import Keys
 import time
 import xlrd
 
-arq = open("resultado.txt", "w")
-Workbook = xlrd.open_workbook('C:/Users/Lucas/PYTHON/excel.xls')
-Sheet = Workbook.sheet_by_name('Planilha1')
-linha = Sheet.nrows
-coluna = Sheet.ncols
+arq = open("resultado.txt", "w") #Criando e abrindo o arquivo 'Resultado'
+Workbook = xlrd.open_workbook('C:/Users/Lucas/PYTHON/excel.xls') #Caminho do arquivo com os dados que queremos pesquisar
+Sheet = Workbook.sheet_by_name('Planilha1') #Aba do arquivo
+linha = Sheet.nrows #Contagem de linhas
+coluna = Sheet.ncols #Contagem de colunas
 
-options = webdriver.ChromeOptions()
+options = webdriver.ChromeOptions() #habilitando o ChromeDriver
 options.add_argument("--disable-logging")
 options.add_argument("--log-level=3")
 
-driver = webdriver.Chrome('C:/Users/Lucas/chromedriver.exe',options=options)
-driver.get("https://registro.br/")
+driver = webdriver.Chrome('C:/Users/Lucas/PYTHON/chromedriver.exe',options=options) #Atribuindo o ChromeDriver a uma varíavel
+driver.get("https://registro.br/") #Site a serem buscadas as informações
 
 
-for curr_linha in range(0,linha):
-    x = Sheet.cell_value(curr_linha, 0)
-    pesquisa = driver.find_element_by_id("is-avail-field")
+for curr_linha in range(0,linha): #For "linha atual" na posição X
+    x = Sheet.cell_value(curr_linha, 0) # X = Posição atual ++ incremento
+    pesquisa = driver.find_element_by_id("is-avail-field") #Buscando a barra de pesquisa pelo ID dela na página
     time.sleep(0.5)
-    pesquisa.clear()
+    pesquisa.clear() #Limpando a barra de pesquisa
     time.sleep(0.5)
-    pesquisa.send_keys(x)
+    pesquisa.send_keys(x) #Escrevendo o que pegamos em "Posição atual ++ incremento"
     time.sleep(0.5)  
-    pesquisa.send_keys(Keys.RETURN)
+    pesquisa.send_keys(Keys.RETURN) #Keys.RETURN é a tecla Enter
     time.sleep(0.5)
-    driver.find_element_by_xpath('//*[@id="app"]/main/section/div[2]/div/p/span/strong')
+    driver.find_element_by_xpath('//*[@id="app"]/main/section/div[2]/div/p/span/strong') #Buscando a escrita desejada
     time.sleep(0.5)
-    texto = "Domínio %s %s\n" % (x , driver.find_element_by_xpath('//*[@id="app"]/main/section/div[2]/div/p/span/strong').text)
-    arq.write(texto)
+    texto = "Domínio %s %s\n" % (x , driver.find_element_by_xpath('//*[@id="app"]/main/section/div[2]/div/p/span/strong').text) #Escrevendo os dados que buscamos em um arquivo TXT
+    arq.write(texto) #Escrevendo no arquivo
 
-arq.close()
-driver.close()
+arq.close() #Fechando o arquivo
+driver.close() #Fechando o Driver
