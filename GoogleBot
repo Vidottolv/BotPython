@@ -1,0 +1,50 @@
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+
+Pesquisa = input("Digite a pesquisa a ser feita: \n")
+
+options = webdriver.ChromeOptions() #habilitando o ChromeDriver
+options.add_argument("--disable-logging")
+options.add_argument("--log-level=3")
+
+Driver = driver = webdriver.Chrome('C:/Users/Lucas/PYTHON/chromedriver.exe',options=options) #Atribuindo o ChromeDriver a uma varíavel
+driver.get("https://www.google.com/")
+
+Campo = driver.find_element(by=By.XPATH,value="//input[@aria-label='Pesquisar']")
+Campo.send_keys(Pesquisa)
+Campo.send_keys(Keys.ENTER)
+
+Resultados = driver.find_element(by=By.XPATH,value="//*[@id='result-stats']").text
+
+Numero_resultados = int(Resultados.split("Aproximadamente ")[1].split(' resultados')[0].replace('.',''))
+Max_pages = Numero_resultados / 10 #Cada pagina traz 10 resultados
+
+print("Numero de páginas: %s" %(Max_pages))
+
+URL_page = driver.find_element(by=By.XPATH,value="//a[@aria-label='Page 2']").get_attribute("href")
+
+Page_atual = 0
+start = 10
+lista_resultados = []
+
+while Page_atual <= 10:
+    if not Page_atual == 0:
+        URL_page = URL_page.replace("start=%s" % start, "start=%s" %(start + 10))
+        start = start + 10
+        driver.get(URL_page)
+    Page_atual = Page_atual + 1
+
+    divs = driver.find_elements(by=By.XPATH,value="//div[@class='g']")
+    for div in divs:
+        nome = div.find_elements(by=By.TAG_NAME,value="h3")
+        link = div.find_elements(by=By.TAG_NAME,value="a")
+        resultados = "%s;%s" %(str(nome),link("href"))
+        lista_resultados.append(resultados)
+
+with open("resultadosRobo.txt","w") as arquivo:
+    for resultados in lista_resultados:
+        arquivo.write("%s\n" %resultados)
+    arquivo.close
+
+print("%s Resultados encontrados do Google e salvos no arquivo resultadosRobo.txt" % len(lista_resultados))
