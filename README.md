@@ -5,4 +5,6 @@ I did this project in an extraclass course, to learn how I can use ![](https://u
 
 Also in this folder, we have as project named "GoogleBot", which search a word or phrases requested by the user and save in an archive txt with their references.
 
+The project named "YTBot" is an program to find one esepcific theme on Youtube and paste the results on terminal.
+
 The level of this projects is Easy.
