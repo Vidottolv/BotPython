@@ -1,0 +1,38 @@
+from selenium import webdriver
+from selenium.webdriver.chrome import options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+import time
+
+class RoboYoutube():
+    def __init__(self):
+        options = webdriver.ChromeOptions() #habilitando o ChromeDriver
+        options.add_argument("--disable-logging")
+        options.add_argument("--log-level=3")
+        self.webdriver = webdriver.Chrome('C:/Users/Lucas/PYTHON/chromedriver.exe',options=options)
+
+    def busca(self, busca,paginas):
+        videos = []
+        pagina = 1
+        busca = input("Insira o tema de busca para os vídeos: ")
+
+        url = "https://www.youtube.com/results?search_query=%s" %busca
+        self.webdriver.get(url)
+
+        while pagina <= paginas:
+            titulos = self.webdriver.find_elements(by=By.XPATH,value="//*[@id='video-title']")
+            for titulo in titulos:
+                print("Video encontrado: %s" %titulo.text)
+            self.ProxPage(pagina)
+            pagina += 1
+
+    def ProxPage(self, pagina):
+        print('mudando para a próxima pagina -> Página %s' %(pagina + 1))
+        bottom = pagina * 10000
+        self.webdriver.execute_script("window.scrollTo(0,%s);" %bottom)
+        time.sleep(5)
+
+paginas = int(input("Insira a quantidade de paginas a serem percorridas: "))
+
+bot = RoboYoutube()
+bot.busca("teste",paginas)
